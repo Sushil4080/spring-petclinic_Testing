@@ -60,15 +60,17 @@ jobs:
       # ============================================================
 
       - name: SonarQube Analysis
+        uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: |
-          ./mvnw verify sonar:sonar \
-            -Dsonar.projectKey=petclinic-github-actions \
-            -Dsonar.projectName=petclinic-github-actions \
-            -Dsonar.host.url=${SONAR_HOST_URL} \
-            -Dsonar.token=${SONAR_TOKEN}
+        with:
+          args: >
+            -Dsonar.projectKey=petclinic-github-actions
+            -Dsonar.projectName=petclinic-github-actions
+            -Dsonar.sources=src/main/java
+            -Dsonar.tests=src/test/java
+            -Dsonar.java.binaries=target/classes
 
       # ============================================================
       # 6. TRIVY FILESYSTEM SCAN
