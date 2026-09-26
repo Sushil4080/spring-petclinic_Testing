@@ -1,0 +1,146 @@
+name: PetClinic DevSecOps Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+
+  devsecops:
+
+    runs-on: ubuntu-latest
+
+    env:
+      IMAGE_NAME: petclinic-app
+
+    steps:
+
+      # ============================================================
+      # 1. CHECKOUT
+      # ============================================================
+
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      # ============================================================
+      # 2. SETUP JAVA
+      # ============================================================
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      # ============================================================
+      # 3. MAVEN BUILD
+      # ============================================================
+
+      - name: Maven Build
+        run: |
+          chmod +x mvnw
+          ./mvnw clean compile
+
+      # ============================================================
+      # 4. UNIT TEST
+      # ============================================================
+
+      - name: Unit Test
+        run: |
+          ./mvnw test
+
+      # ============================================================
+      # 5. SONARQUBE
+      # ============================================================
+
+      - name: SonarQube Analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: |
+          ./mvnw verify sonar:sonar \
+            -Dsonar.projectKey=petclinic-github-actions \
+            -Dsonar.projectName=petclinic-github-actions \
+            -Dsonar.host.url=${SONAR_HOST_URL} \
+            -Dsonar.token=${SONAR_TOKEN}
+
+      # ============================================================
+      # 6. TRIVY FILESYSTEM SCAN
+      # ============================================================
+
+      - name: Trivy Filesystem Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: fs
+          scan-ref: .
+          severity: HIGH,CRITICAL
+          exit-code: '0'
+
+      # ============================================================
+      # 7. DOCKER BUILD
+      # ============================================================
+
+      - name: Docker Build
+        run: |
+          docker build \
+            -t ${IMAGE_NAME}:${GITHUB_RUN_NUMBER} \
+            -t ${IMAGE_NAME}:latest \
+            .
+
+      # ============================================================
+      # 8. TRIVY DOCKER IMAGE SCAN
+      # ============================================================
+
+      - name: Trivy Docker Image Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: petclinic-app:${{ github.run_number }}
+          severity: HIGH,CRITICAL
+          exit-code: '0'
+
+      # ============================================================
+      # 9. DOCKER RUN
+      # ============================================================
+
+      - name: Docker Run
+        run: |
+          docker run -d \
+            --name petclinic-test \
+            -p 8081:8080 \
+            ${IMAGE_NAME}:${GITHUB_RUN_NUMBER}
+
+          echo "Waiting for application..."
+          sleep 20
+
+          docker ps
+
+      # ============================================================
+      # 10. HEALTH CHECK
+      # ============================================================
+
+      - name: Health Check
+        run: |
+          echo "Checking PetClinic..."
+
+          curl -f http://localhost:8081/ || {
+            echo "Application health check failed"
+            docker logs petclinic-test
+            exit 1
+          }
+
+          echo "Application is UP"
+
+      # ============================================================
+      # 11. CLEANUP
+      # ============================================================
+
+      - name: Cleanup
+        if: always()
+        run: |
+          docker rm -f petclinic-test 2>/dev/null || true
