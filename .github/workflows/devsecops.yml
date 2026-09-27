@@ -45,7 +45,7 @@ jobs:
       - name: Maven Build
         run: |
           chmod +x mvnw
-          ./mvnw clean compile
+          ./mvnw clean package -DskipTests
 
       # ============================================================
       # 4. UNIT TEST
