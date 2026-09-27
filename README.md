@@ -242,6 +242,16 @@ project.
        ↓
     Cleanup
 
+## 🧪 Pipeline Validation
+
+The custom GitHub Actions DevSecOps pipeline has been successfully executed end-to-end on the self-hosted Ubuntu runner.
+
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/86f500b4-af8f-40c8-982d-898250f8d251" />
+
+Validated stages:
+
+...
+
 #### Runner
 
 The workflow uses:
@@ -380,6 +390,13 @@ The Jenkins implementation demonstrates:
        ↓
     Cleanup
 
+  ### Jenkins Pipeline Execution
+
+The Jenkins pipeline successfully executes the CI/CD workflow from source checkout through container verification and cleanup.
+
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/3d315318-5488-406e-89f9-d001e33a8fbb" />
+
+
 The `Jenkinsfile` keeps the Jenkins pipeline configuration
 version-controlled with the application.
 
@@ -391,6 +408,8 @@ version-controlled with the application.
 
 SonarQube is used for automated code-quality analysis of the Java
 application.
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/b1f1c219-1a19-4447-be15-acee085f4e78" />
+
 
 ### Trivy Filesystem Scan
 
@@ -463,6 +482,8 @@ executed end-to-end on the self-hosted Ubuntu runner.
 ------------------------------------------------------------------------
 
 ## 🖥️ Self-Hosted GitHub Actions Runner
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/df29bbee-ef74-4671-b5b7-fd8e6e854a01" />
+
 
 The custom DevSecOps workflow uses a self-hosted runner with:
 
