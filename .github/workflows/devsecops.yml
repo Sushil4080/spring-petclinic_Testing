@@ -4,15 +4,12 @@ on:
   push:
     branches:
       - main
-
   pull_request:
     branches:
       - main
 
 jobs:
-
   devsecops:
-
     runs-on: [self-hosted, Linux, X64]
 
     env:
@@ -23,14 +20,12 @@ jobs:
       # ============================================================
       # 1. CHECKOUT
       # ============================================================
-
       - name: Checkout Source Code
         uses: actions/checkout@v4
 
       # ============================================================
       # 2. SETUP JAVA
       # ============================================================
-
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -41,7 +36,6 @@ jobs:
       # ============================================================
       # 3. MAVEN BUILD
       # ============================================================
-
       - name: Maven Build
         run: |
           chmod +x mvnw
@@ -50,7 +44,6 @@ jobs:
       # ============================================================
       # 4. UNIT TEST
       # ============================================================
-
       - name: Unit Test
         run: |
           ./mvnw test
@@ -58,7 +51,6 @@ jobs:
       # ============================================================
       # 5. SONARQUBE
       # ============================================================
-
       - name: SonarQube Analysis
         uses: SonarSource/sonarqube-scan-action@v6
         env:
@@ -75,21 +67,21 @@ jobs:
       # ============================================================
       # 6. TRIVY FILESYSTEM SCAN
       # ============================================================
-
       - name: Trivy Filesystem Scan
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: fs
-          scan-ref: .
-          severity: HIGH,CRITICAL
-          exit-code: '0'
+        run: |
+          echo "===== Trivy Filesystem Scan ====="
+          trivy fs \
+            --severity HIGH,CRITICAL \
+            --exit-code 0 \
+            --no-progress \
+            .
 
       # ============================================================
       # 7. DOCKER BUILD
       # ============================================================
-
       - name: Docker Build
         run: |
+          echo "===== Docker Build ====="
           docker build \
             -t ${IMAGE_NAME}:${GITHUB_RUN_NUMBER} \
             -t ${IMAGE_NAME}:latest \
@@ -98,22 +90,22 @@ jobs:
       # ============================================================
       # 8. TRIVY DOCKER IMAGE SCAN
       # ============================================================
-
       - name: Trivy Docker Image Scan
-      run: |
-        echo "===== Trivy Docker Image Scan ====="
-        trivy image \
-          --severity HIGH,CRITICAL \
-          --exit-code 0 \
-          --no-progress \
-          petclinic-app:${{ github.run_number }}
+        run: |
+          echo "===== Trivy Docker Image Scan ====="
+          trivy image \
+            --severity HIGH,CRITICAL \
+            --exit-code 0 \
+            --no-progress \
+            ${IMAGE_NAME}:${GITHUB_RUN_NUMBER}
 
       # ============================================================
       # 9. DOCKER RUN
       # ============================================================
-
       - name: Docker Run
         run: |
+          echo "===== Starting PetClinic ====="
+
           docker run -d \
             --name petclinic-test \
             -p 8081:8080 \
@@ -127,10 +119,9 @@ jobs:
       # ============================================================
       # 10. HEALTH CHECK
       # ============================================================
-
       - name: Health Check
         run: |
-          echo "Checking PetClinic..."
+          echo "===== Health Check ====="
 
           curl -f http://localhost:8081/ || {
             echo "Application health check failed"
@@ -143,8 +134,8 @@ jobs:
       # ============================================================
       # 11. CLEANUP
       # ============================================================
-
       - name: Cleanup
         if: always()
         run: |
+          echo "===== Cleanup ====="
           docker rm -f petclinic-test 2>/dev/null || true
