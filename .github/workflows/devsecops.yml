@@ -100,11 +100,13 @@ jobs:
       # ============================================================
 
       - name: Trivy Docker Image Scan
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: petclinic-app:${{ github.run_number }}
-          severity: HIGH,CRITICAL
-          exit-code: '0'
+      run: |
+        echo "===== Trivy Docker Image Scan ====="
+        trivy image \
+          --severity HIGH,CRITICAL \
+          --exit-code 0 \
+          --no-progress \
+          petclinic-app:${{ github.run_number }}
 
       # ============================================================
       # 9. DOCKER RUN
