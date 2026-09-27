@@ -1,880 +1,693 @@
-Spring PetClinic -- DevSecOps CI/CD Project
+ Spring PetClinic -- DevSecOps CI/CD Project
 
-A hands-on DevOps and DevSecOps portfolio project based on a fork of
-the Spring PetClinic sample application, extended with CI/CD
-automation using Jenkins and GitHub Actions.
+**A hands-on DevOps and DevSecOps portfolio project based on a fork of
+the Spring PetClinic sample application, extended with Jenkins and
+GitHub Actions CI/CD automation.**
 
+[GitHub
+Repository](https://github.com/Sushil4080/spring-petclinic_Testing) \|
+[GitHub
+Actions](https://github.com/Sushil4080/spring-petclinic_Testing/actions)
+\|
+[Workflows](https://github.com/Sushil4080/spring-petclinic_Testing/tree/main/.github/workflows)
 
+------------------------------------------------------------------------
 
+## 📌 Project Background
 
-
-
-
-
-
-
-
-📌 Project Background
-
-This repository is a fork of the official Spring PetClinic sample
-application.
+This repository is a **fork of the official Spring PetClinic sample
+application**.
 
 The original application source code and functionality are based on the
 upstream Spring PetClinic project:
 
-Upstream repository:
-https://github.com/spring-projects/spring-petclinic
+**Upstream:**
+[spring-projects/spring-petclinic](https://github.com/spring-projects/spring-petclinic)
 
-This fork is used for hands-on DevOps and DevSecOps learning,
-experimentation, CI/CD implementation, and portfolio demonstration.
+This fork is used for hands-on **DevOps and DevSecOps learning,
+experimentation, CI/CD implementation, and portfolio demonstration**.
 
-What this project focuses on
+### What was implemented for this project
 
-The main focus of this repository is the automation implemented around
-the application:
+-   Jenkins CI/CD pipeline
+-   GitHub Actions DevSecOps workflow
+-   Self-hosted GitHub Actions runner on Ubuntu/Linux
+-   Maven build and unit-test automation
+-   SonarQube code-quality analysis
+-   Trivy filesystem vulnerability scanning
+-   Trivy Docker image vulnerability scanning
+-   Docker image build and runtime validation
+-   Application health checks
+-   Automated cleanup
+-   Kubernetes/Kind workflow files are present in the repository
 
-Jenkins CI/CD
+------------------------------------------------------------------------
 
-GitHub Actions CI/CD
+## 🚀 Project Overview
 
-Self-hosted GitHub Actions runner on Ubuntu/Linux
+The project demonstrates a CI/CD workflow that moves a Java/Spring Boot
+application through build, test, quality analysis, security scanning,
+containerization, runtime validation, and cleanup.
 
-Maven build and test automation
+### Overall Flow
 
-SonarQube code-quality analysis
+    Source Code
+        ↓
+    Build
+        ↓
+    Unit Test
+        ↓
+    SonarQube
+        ↓
+    Trivy Security Scan
+        ↓
+    Docker Build
+        ↓
+    Trivy Docker Image Scan
+        ↓
+    Docker Run
+        ↓
+    Health Check
+        ↓
+    Cleanup
 
-Trivy security scanning
+------------------------------------------------------------------------
 
-Docker image build and runtime validation
+## 🏗️ CI/CD Architecture
 
-Kubernetes/Kind workflow files already present in the repository
+### Jenkins Pipeline
 
-Attribution: The application itself is based on the upstream
-Spring PetClinic project. The DevOps/DevSecOps automation described
-below should be considered separately from the original application.
+    GitHub Repository
+           │
+           ▼
+        Jenkins
+           │
+           ▼
+       Checkout
+           │
+           ▼
+     Maven Build
+           │
+           ▼
+      Unit Test
+           │
+           ▼
+     SonarQube
+           │
+           ▼
+    Trivy FS Scan
+           │
+           ▼
+     Docker Build
+           │
+           ▼
+    Trivy Image Scan
+           │
+           ▼
+      Docker Run
+           │
+           ▼
+     Health Check
+           │
+           ▼
+       Cleanup
 
-🚀 Project Overview
+### GitHub Actions DevSecOps Pipeline
 
-The project demonstrates a CI/CD workflow that moves an application
-through:
+    GitHub Repository
+           │
+           ▼
+     GitHub Actions
+           │
+           ▼
+    Self-Hosted Ubuntu Runner
+           │
+           ▼
+    Checkout Source Code
+           │
+           ▼
+        Java 21
+           │
+           ▼
+      Maven Build
+           │
+           ▼
+       Unit Test
+           │
+           ▼
+     SonarQube
+           │
+           ▼
+    Trivy FS Scan
+           │
+           ▼
+     Docker Build
+           │
+           ▼
+    Trivy Image Scan
+           │
+           ▼
+      Docker Run
+           │
+           ▼
+     Health Check
+           │
+           ▼
+       Cleanup
 
-Source Code
-    ↓
-Build
-    ↓
-Unit Test
-    ↓
-Code Quality
-    ↓
-Security Scan
-    ↓
-Docker Build
-    ↓
-Docker Image Scan
-    ↓
-Application Run
-    ↓
-Health Check
-    ↓
-Cleanup
+------------------------------------------------------------------------
 
-Two CI/CD implementations are represented in the repository:
+## 🛠️ Technologies & Tools
 
-Jenkins
+  Category             Technology
+  -------------------- --------------------------
+  Source Control       Git, GitHub
+  CI/CD                Jenkins, GitHub Actions
+  Runner               Self-hosted Ubuntu/Linux
+  Application          Spring Boot / Java
+  Build                Maven
+  Code Quality         SonarQube
+  Security Scanning    Trivy
+  Containerization     Docker
+  Kubernetes Testing   Kubernetes / Kind
+  Operating System     Ubuntu / Linux
+  Scripting            Shell
 
-GitHub Actions
+------------------------------------------------------------------------
 
-🏗️ CI/CD Architecture
+## 📁 Repository Structure
 
-Jenkins Pipeline
+    spring-petclinic_Testing/
+    ├── .github/
+    │   └── workflows/
+    │       ├── devsecops.yml
+    │       ├── deploy-and-test-cluster.yml
+    │       ├── gradle-build.yml
+    │       └── maven-build.yml
+    │
+    ├── .devcontainer/
+    ├── .mvn/
+    │   └── wrapper/
+    ├── gradle/
+    │   └── wrapper/
+    ├── k8s/
+    ├── src/
+    │   ├── main/
+    │   └── test/
+    │
+    ├── Dockerfile
+    ├── docker-compose.yml
+    ├── pom.xml
+    ├── build.gradle
+    ├── settings.gradle
+    ├── mvnw
+    ├── mvnw.cmd
+    ├── gradlew
+    ├── gradlew.bat
+    ├── Jenkinsfile
+    └── README.md
 
-The Jenkins implementation is used to demonstrate the following CI/CD
-and DevSecOps flow:
+------------------------------------------------------------------------
 
-GitHub
-  ↓
-Jenkins
-  ↓
-Checkout
-  ↓
-Build
-  ↓
-Unit Test
-  ↓
-SonarQube Analysis
-  ↓
-Trivy Security Scan
-  ↓
-Docker Build
-  ↓
-Docker Image Scan
-  ↓
-Docker Run
-  ↓
-Health Check
-  ↓
-Cleanup
+## ⚙️ GitHub Actions Workflows
 
-GitHub Actions DevSecOps Pipeline
+The repository contains multiple workflows under `.github/workflows/`.
 
-The custom devsecops.yml workflow runs on a self-hosted Linux runner:
+### 1. devsecops.yml --- Custom DevSecOps Workflow
 
-GitHub
-  ↓
-GitHub Actions
-  ↓
-Self-Hosted Ubuntu Runner
-  ↓
-Checkout Source Code
-  ↓
-Java 21
-  ↓
-Maven Build
-  ↓
-Unit Test
-  ↓
-SonarQube Analysis
-  ↓
-Trivy Filesystem Scan
-  ↓
-Docker Build
-  ↓
-Trivy Docker Image Scan
-  ↓
-Docker Run
-  ↓
-Health Check
-  ↓
-Cleanup
+**File:** `.github/workflows/devsecops.yml`
 
-🛠️ Technologies & Tools
+This is the custom DevSecOps workflow implemented and tested for this
+project.
 
-Category             Technology
+    Checkout
+       ↓
+    Setup Java 21
+       ↓
+    Maven Build
+       ↓
+    Unit Test
+       ↓
+    SonarQube Analysis
+       ↓
+    Trivy Filesystem Scan
+       ↓
+    Docker Build
+       ↓
+    Trivy Docker Image Scan
+       ↓
+    Docker Run
+       ↓
+    Health Check
+       ↓
+    Cleanup
 
-Source Control       Git, GitHub
-CI/CD                Jenkins, GitHub Actions
-Runner               Self-hosted Ubuntu/Linux
-Application          Spring Boot / Java
-Build                Maven
-Code Quality         SonarQube
-Security Scanning    Trivy
-Containerization     Docker
-Kubernetes Testing   Kubernetes / Kind
-Operating System     Ubuntu / Linux
-Scripting            Shell
-
-📁 Repository Structure
-
-The repository currently contains application code, CI/CD workflows,
-Kubernetes-related files, Docker configuration, and build configuration.
-
-spring-petclinic_Testing/
-│
-├── .github/
-│   └── workflows/
-│       ├── devsecops.yml
-│       ├── deploy-and-test-cluster.yml
-│       ├── gradle-build.yml
-│       └── maven-build.yml
-│
-├── .devcontainer/
-│
-├── .mvn/
-│   └── wrapper/
-│
-├── gradle/
-│   └── wrapper/
-│
-├── k8s/
-│
-├── src/
-│   ├── main/
-│   └── test/
-│
-├── Dockerfile
-├── docker-compose.yml
-├── pom.xml
-├── build.gradle
-├── settings.gradle
-├── mvnw
-├── mvnw.cmd
-├── gradlew
-├── gradlew.bat
-├── Jenkinsfile
-└── README.md
-
-If the Jenkinsfile is maintained outside the repository in your
-Jenkins configuration, remove that entry. If it is committed in the
-repository, keep it.
-
-⚙️ GitHub Actions Workflows
-
-The repository contains multiple workflows under:
-
-.github/workflows/
-
-1. devsecops.yml
-
-File:
-
-.github/workflows/devsecops.yml
-
-This is the custom DevSecOps workflow implemented for this project.
-
-Runner
-
-The workflow uses:
-
-runs-on: [self-hosted, Linux, X64]
-
-The workflow therefore executes on the configured self-hosted
-Ubuntu/Linux runner.
-
-Pipeline stages
-
-Checkout
-   ↓
-Setup Java
-   ↓
-Maven Build
-   ↓
-Unit Test
-   ↓
-SonarQube
-   ↓
-Trivy Filesystem Scan
-   ↓
-Docker Build
-   ↓
-Trivy Docker Image Scan
-   ↓
-Docker Run
-   ↓
-Health Check
-   ↓
-Cleanup
-
-Maven Build
-
-chmod +x mvnw
-./mvnw clean package -DskipTests
-
-The application is packaged first so that the JAR is available to the
-Docker build.
-
-Unit Test
-
-./mvnw test
-
-SonarQube
+#### Runner
 
 The workflow uses:
 
-SONAR_TOKEN
-SONAR_HOST_URL
+    runs-on: [self-hosted, Linux, X64]
 
-and analyzes:
+#### Maven Build
 
-Sources:
-src/main/java
+    chmod +x mvnw
+    ./mvnw clean package -DskipTests
 
-Tests:
-src/test/java
+#### Unit Test
 
-Java Binaries:
-target/classes
+    ./mvnw test
 
-Project key:
+#### SonarQube
 
-petclinic-github-actions
+The workflow uses the repository configuration:
 
-Trivy Filesystem Scan
+    SONAR_TOKEN
+    SONAR_HOST_URL
 
-trivy fs \
-  --severity HIGH,CRITICAL \
-  --exit-code 0 \
-  --no-progress \
-  .
+Project configuration:
 
-Docker Build
+  Setting         Value
+  --------------- ----------------------------
+  Project Key     `petclinic-github-actions`
+  Project Name    `petclinic-github-actions`
+  Sources         `src/main/java`
+  Tests           `src/test/java`
+  Java Binaries   `target/classes`
 
-docker build \
-  -t petclinic-app:${GITHUB_RUN_NUMBER} \
-  -t petclinic-app:latest \
-  .
+#### Trivy Filesystem Scan
 
-Trivy Docker Image Scan
+    trivy fs \
+      --severity HIGH,CRITICAL \
+      --exit-code 0 \
+      --no-progress \
+      .
 
-trivy image \
-  --severity HIGH,CRITICAL \
-  --exit-code 0 \
-  --no-progress \
-  ${IMAGE_NAME}:${GITHUB_RUN_NUMBER}
+#### Docker Build
 
-Docker Run
+    docker build \
+      -t petclinic-app:${GITHUB_RUN_NUMBER} \
+      -t petclinic-app:latest \
+      .
 
-docker run -d \
-  --name petclinic-test \
-  -p 8081:8080 \
-  ${IMAGE_NAME}:${GITHUB_RUN_NUMBER}
+#### Trivy Docker Image Scan
 
-Health Check
+    trivy image \
+      --severity HIGH,CRITICAL \
+      --exit-code 0 \
+      --no-progress \
+      ${IMAGE_NAME}:${GITHUB_RUN_NUMBER}
 
-curl -f http://localhost:8081/
+#### Docker Run
 
-If the health check fails, the workflow prints the container logs and
-exits with an error.
+    docker run -d \
+      --name petclinic-test \
+      -p 8081:8080 \
+      ${IMAGE_NAME}:${GITHUB_RUN_NUMBER}
 
-Cleanup
+#### Health Check
 
-docker rm -f petclinic-test 2>/dev/null || true
+    curl -f http://localhost:8081/
 
-The cleanup step runs with:
+#### Cleanup
 
-if: always()
+    docker rm -f petclinic-test 2>/dev/null || true
 
-so the test container is removed even when an earlier stage fails.
+### 2. maven-build.yml
 
-2. maven-build.yml
+**File:** `.github/workflows/maven-build.yml`
 
-File:
+This is the repository\'s Maven-oriented GitHub Actions workflow. It is
+separate from the custom `devsecops.yml` workflow.
 
-.github/workflows/maven-build.yml
+### 3. gradle-build.yml
 
-This is the repository's Maven-oriented GitHub Actions workflow.
+**File:** `.github/workflows/gradle-build.yml`
 
-It is separate from the custom devsecops.yml workflow.
+This is the repository\'s Gradle-oriented GitHub Actions workflow. It is
+separate from the custom DevSecOps workflow.
 
-3. gradle-build.yml
+### 4. deploy-and-test-cluster.yml
 
-File:
-
-.github/workflows/gradle-build.yml
-
-This is the repository's Gradle-oriented GitHub Actions workflow.
-
-It is separate from the custom DevSecOps workflow.
-
-4. deploy-and-test-cluster.yml
-
-File:
-
-.github/workflows/deploy-and-test-cluster.yml
+**File:** `.github/workflows/deploy-and-test-cluster.yml`
 
 This workflow is present in the repository for Kubernetes cluster
 deployment/testing using Kind.
 
-The repository history indicates that this workflow was added for
-Kubernetes deployment testing.
+> **Attribution note:** This workflow is documented because it exists in
+> the fork. It should only be presented as newly implemented personal
+> work if it has actually been created, modified, and tested by you.
 
-This workflow is documented here because it exists in the fork. It
-should only be presented as newly implemented personal work if it has
-actually been created, modified, and tested by you.
+------------------------------------------------------------------------
 
-🤖 Jenkins Implementation
+## 🤖 Jenkins Implementation
 
-The repository includes a Jenkins pipeline configuration:
+The repository includes the Jenkins pipeline configuration:
 
-Jenkinsfile
+    Jenkinsfile
 
-The Jenkins implementation demonstrates CI/CD automation using Jenkins
-with the following concepts:
+The Jenkins implementation demonstrates:
 
-GitHub source-code checkout
+-   GitHub source-code checkout
+-   Maven build
+-   Unit testing
+-   SonarQube integration
+-   Trivy security scanning
+-   Docker image build
+-   Docker image scanning
+-   Docker runtime validation
+-   Application health check
+-   Cleanup
 
-Maven build
+### Jenkins Pipeline Flow
 
-Unit testing
+    Checkout
+       ↓
+    Build
+       ↓
+    Unit Test
+       ↓
+    SonarQube Analysis
+       ↓
+    Trivy Security Scan
+       ↓
+    Docker Build
+       ↓
+    Trivy Docker Image Scan
+       ↓
+    Docker Run
+       ↓
+    Health Check
+       ↓
+    Cleanup
 
-SonarQube integration
+The `Jenkinsfile` keeps the Jenkins pipeline configuration
+version-controlled with the application.
 
-Trivy security scanning
+------------------------------------------------------------------------
 
-Docker image build
+## 🔐 DevSecOps Implementation
 
-Docker image scanning
+### SonarQube
 
-Docker runtime validation
+SonarQube is used for automated code-quality analysis of the Java
+application.
 
-Application health check
+### Trivy Filesystem Scan
 
-Cleanup
+Trivy scans the project filesystem for vulnerabilities, with the current
+workflow focusing on:
 
-Jenkins Pipeline Flow
+-   HIGH
+-   CRITICAL
 
-Checkout
-   ↓
-Build
-   ↓
-Unit Test
-   ↓
-SonarQube Analysis
-   ↓
-Trivy Security Scan
-   ↓
-Docker Build
-   ↓
-Trivy Docker Image Scan
-   ↓
-Docker Run
-   ↓
-Health Check
-   ↓
-Cleanup
-
-Jenkinsfile
-
-The pipeline definition is maintained as:
-
-Jenkinsfile
-
-This allows the CI/CD configuration to be version-controlled alongside
-the application.
-
-🔐 DevSecOps Implementation
-
-Security and quality checks are integrated into the CI/CD process.
-
-SonarQube
-
-SonarQube is used for automated code-quality analysis.
-
-The pipeline analyzes:
-
-Java source code
-
-Test source configuration
-
-Java compiled classes
-
-Project code-quality information
-
-Trivy Filesystem Scan
-
-Trivy scans the project filesystem for vulnerabilities.
-
-Current severity focus:
-
-HIGH
-CRITICAL
-
-Trivy Docker Image Scan
+### Trivy Docker Image Scan
 
 After the Docker image is built, Trivy scans the container image for
 vulnerabilities.
 
-This provides a security check before the image is executed.
+> **Current learning configuration:** `--exit-code 0` reports findings
+> without failing the workflow. A production-style implementation can
+> use a non-zero exit code to enforce a security gate.
 
-The current learning pipeline uses --exit-code 0, so the scan
-reports findings without making HIGH/CRITICAL findings fail the
-workflow. This can be changed to a blocking security gate in a future
-production-style implementation.
+------------------------------------------------------------------------
 
-🐳 Docker Implementation
+## 🐳 Docker Implementation
 
-The CI/CD workflow packages the application into a Docker image.
+Application flow:
 
-The application flow is:
+    Maven Build
+        ↓
+    target/*.jar
+        ↓
+    Docker Build
+        ↓
+    petclinic-app:<run-number>
+        ↓
+    Trivy Image Scan
+        ↓
+    Docker Run
+        ↓
+    Health Check
 
-Maven Build
-    ↓
-target/*.jar
-    ↓
-Docker Build
-    ↓
-petclinic-app:<run-number>
-    ↓
-Trivy Image Scan
-    ↓
-Docker Run
-    ↓
-Health Check
+### Dockerfile
 
-Dockerfile
+    FROM eclipse-temurin:21-jre
 
-The current Docker approach uses the generated Maven JAR:
+    WORKDIR /app
 
-FROM eclipse-temurin:21-jre
+    COPY target/*.jar app.jar
 
-WORKDIR /app
+    EXPOSE 8080
 
-COPY target/*.jar app.jar
+    ENTRYPOINT ["java", "-jar", "app.jar"]
 
-EXPOSE 8080
+------------------------------------------------------------------------
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
-
-🧪 Pipeline Validation
+## 🧪 Pipeline Validation
 
 The custom GitHub Actions DevSecOps pipeline has been successfully
 executed end-to-end on the self-hosted Ubuntu runner.
 
-Validated stages:
+    ✅ Checkout Source Code
+    ✅ Setup Java
+    ✅ Maven Build
+    ✅ Unit Test
+    ✅ SonarQube Analysis
+    ✅ Trivy Filesystem Scan
+    ✅ Docker Build
+    ✅ Trivy Docker Image Scan
+    ✅ Docker Run
+    ✅ Health Check
+    ✅ Cleanup
 
-✅ Checkout Source Code
-✅ Setup Java
-✅ Maven Build
-✅ Unit Test
-✅ SonarQube Analysis
-✅ Trivy Filesystem Scan
-✅ Docker Build
-✅ Trivy Docker Image Scan
-✅ Docker Run
-✅ Health Check
-✅ Cleanup
+------------------------------------------------------------------------
 
-This validates the complete workflow from source checkout through
-application runtime verification.
-
-🖥️ Self-Hosted GitHub Actions Runner
+## 🖥️ Self-Hosted GitHub Actions Runner
 
 The custom DevSecOps workflow uses a self-hosted runner with:
 
-self-hosted
-Linux
-X64
+    self-hosted
+    Linux
+    X64
 
-The runner is hosted on an Ubuntu/Linux environment and provides access
-to locally installed tools including:
+The runner provides access to locally installed tools such as:
 
-Java
+-   Java
+-   Maven
+-   Docker
+-   Trivy
+-   SonarQube
 
-Maven
+------------------------------------------------------------------------
 
-Docker
+## 🔗 SonarQube Configuration
 
-Trivy
+The GitHub Actions workflow expects:
 
-SonarQube
+    SONAR_TOKEN
+    SONAR_HOST_URL
 
-This setup is also useful when CI jobs need access to services running
-on the local development environment.
+Secrets and connection information should never be committed to Git.
 
-🔗 SonarQube Configuration
+> **Security:** Store tokens and credentials using GitHub Actions
+> Secrets, Jenkins Credentials, or another appropriate
+> secrets-management system.
 
-The GitHub Actions workflow uses repository-level configuration for the
-SonarQube connection.
+------------------------------------------------------------------------
 
-The workflow expects:
-
-SONAR_TOKEN
-SONAR_HOST_URL
-
-The SonarQube project configuration used by the custom workflow is:
-
-Project Key:
-petclinic-github-actions
-
-Project Name:
-petclinic-github-actions
-
-Sources:
-src/main/java
-
-Tests:
-src/test/java
-
-Java Binaries:
-target/classes
-
-Security: Never commit SonarQube tokens, passwords, API keys, or
-other credentials into the repository. Store secrets using GitHub
-Actions Secrets or Jenkins Credentials.
-
-☸️ Kubernetes
+## ☸️ Kubernetes
 
 The repository contains:
 
-k8s/
+    k8s/
 
-and an existing Kubernetes/Kind-related GitHub Actions workflow:
+and an existing Kubernetes/Kind workflow:
 
-.github/workflows/deploy-and-test-cluster.yml
+    .github/workflows/deploy-and-test-cluster.yml
 
-This provides a foundation for extending the current Docker-based CI/CD
-workflow into automated Kubernetes deployment.
+### Extendable Deployment Flow
 
-Extendable deployment flow
+    Source Code
+        ↓
+    Build
+        ↓
+    Unit Test
+        ↓
+    SonarQube
+        ↓
+    Trivy
+        ↓
+    Docker Build
+        ↓
+    Container Registry
+        ↓
+    Kubernetes
+        ↓
+    Deployment
+        ↓
+    Service
+        ↓
+    Health Verification
 
-Source Code
-    ↓
-Build
-    ↓
-Unit Test
-    ↓
-SonarQube
-    ↓
-Trivy
-    ↓
-Docker Build
-    ↓
-Container Registry
-    ↓
-Kubernetes
-    ↓
-Deployment
-    ↓
-Service
-    ↓
-Health Verification
+------------------------------------------------------------------------
 
-🧰 Local Prerequisites
+## 🧰 Local Prerequisites
 
-For local reproduction, install the tools required for the part of the
-project you want to run:
+-   Git
+-   Java 21
+-   Docker
+-   Trivy
+-   Jenkins, for Jenkins pipeline testing
+-   SonarQube, for local SonarQube testing
+-   kubectl / Kind, for Kubernetes workflow testing
 
-Git
+The Maven wrapper is included in the repository.
 
-Java 21
+------------------------------------------------------------------------
 
-Docker
+## 🚀 Run the Application Locally
 
-Trivy
+    git clone https://github.com/Sushil4080/spring-petclinic_Testing.git
+    cd spring-petclinic_Testing
 
-Jenkins, for Jenkins pipeline testing
+    chmod +x mvnw
 
-SonarQube, for local SonarQube testing
+    ./mvnw clean package
 
-kubectl / Kind, for Kubernetes workflow testing
+    ./mvnw spring-boot:run
 
-The Maven wrapper is included in the repository, so Maven does not have
-to be installed separately for the Maven build.
+Open:
 
-🚀 Run the Application Locally
+    http://localhost:8080/
 
-Clone the repository:
+------------------------------------------------------------------------
 
-git clone https://github.com/Sushil4080/spring-petclinic_Testing.git
-cd spring-petclinic_Testing
+## 🐳 Build and Run with Docker
 
-Make the Maven wrapper executable:
+    ./mvnw clean package -DskipTests
 
-chmod +x mvnw
+    docker build -t petclinic-app:latest .
 
-Build the application:
+    docker run -d \
+      --name petclinic-test \
+      -p 8081:8080 \
+      petclinic-app:latest
 
-./mvnw clean package
+    docker ps
 
-Run the application:
+    curl -f http://localhost:8081/
 
-./mvnw spring-boot:run
+    docker logs petclinic-test
 
-Access the application:
+    docker rm -f petclinic-test
 
-http://localhost:8080/
+------------------------------------------------------------------------
 
-🐳 Build and Run with Docker
+## 🔍 Run Trivy Locally
 
-Build the application JAR:
+### Filesystem Scan
 
-./mvnw clean package -DskipTests
+    trivy fs \
+      --severity HIGH,CRITICAL \
+      --no-progress \
+      .
 
-Build the Docker image:
+### Docker Image Scan
 
-docker build -t petclinic-app:latest .
+    trivy image \
+      --severity HIGH,CRITICAL \
+      --no-progress \
+      petclinic-app:latest
 
-Run the container:
-
-docker run -d \
-  --name petclinic-test \
-  -p 8081:8080 \
-  petclinic-app:latest
-
-Check the container:
-
-docker ps
-
-Test the application:
-
-curl -f http://localhost:8081/
-
-View logs:
-
-docker logs petclinic-test
-
-Remove the test container:
-
-docker rm -f petclinic-test
-
-🔍 Run Trivy Locally
-
-Filesystem Scan
-
-trivy fs \
-  --severity HIGH,CRITICAL \
-  --no-progress \
-  .
-
-Docker Image Scan
-
-trivy image \
-  --severity HIGH,CRITICAL \
-  --no-progress \
-  petclinic-app:latest
-
-📸 Project Screenshots
-
-Screenshots can be stored under:
-
-docs/images/
-
-Recommended screenshots:
-
-Jenkins Pipeline
-
-docs/images/jenkins-pipeline.png
-
-![Jenkins Pipeline](docs/images/jenkins-pipeline.png)
-
-GitHub Actions Successful Pipeline
-
-docs/images/github-actions-pipeline.png
-
-![GitHub Actions Pipeline](docs/images/github-actions-pipeline.png)
-
-SonarQube Dashboard
-
-docs/images/sonarqube-dashboard.png
-
-![SonarQube Dashboard](docs/images/sonarqube-dashboard.png)
-
-Before committing screenshots, make sure no passwords, tokens, private
-URLs, credentials, or other sensitive information are visible.
-
-🎯 Key Learning Outcomes
-
-This project provides hands-on experience with:
-
-CI/CD pipeline design
-
-Jenkins Pipeline automation
-
-GitHub Actions workflow automation
-
-Self-hosted GitHub Actions runners
-
-Linux-based CI/CD environments
-
-Maven build automation
-
-Java application packaging
-
-Unit-test automation
-
-SonarQube integration
-
-Trivy filesystem scanning
-
-Trivy Docker image scanning
-
-Docker image creation
-
-Docker container execution
-
-Application health checks
-
-Pipeline troubleshooting
-
-CI/CD failure analysis
-
-DevSecOps practices
-
-Kubernetes deployment/testing concepts
-
-🚧 Future Improvements
-
-The project can be extended with:
-
-Docker image push to Docker Hub
-
-Amazon ECR integration
-
-Automated Kubernetes deployment
-
-Helm charts
-
-Argo CD / GitOps
-
-Kubernetes readiness probes
-
-Kubernetes liveness probes
-
-Prometheus monitoring
-
-Grafana dashboards
-
-Deployment rollback
-
-Slack/email notifications
-
-AWS deployment
-
-Stronger vulnerability gates
-
-Container image signing
-
-SBOM generation
-
-Dependency scanning
-
-Centralized secrets management
-
-Separate development, staging, and production environments
-
-📌 Project Highlights
-
-                       DEVSECOPS PROJECT
-                              │
-             ┌────────────────┴────────────────┐
-             │                                 │
-          Jenkins                       GitHub Actions
-             │                                 │
-             └────────────────┬────────────────┘
-                              ↓
-                         Maven Build
-                              ↓
-                          Unit Test
-                              ↓
-                          SonarQube
-                              ↓
-                       Trivy FS Scan
-                              ↓
-                        Docker Build
-                              ↓
-                    Trivy Image Scan
-                              ↓
-                        Docker Run
-                              ↓
-                       Health Check
-                              ↓
-                          Cleanup
-
-🔗 Repository Links
-
-Main Repository
-
-https://github.com/Sushil4080/spring-petclinic_Testing
-
-GitHub Actions Workflows
-
-https://github.com/Sushil4080/spring-petclinic_Testing/tree/main/.github/workflows
-
-DevSecOps Workflow
-
-https://github.com/Sushil4080/spring-petclinic_Testing/blob/main/.github/workflows/devsecops.yml
-
-Jenkinsfile
-
-https://github.com/Sushil4080/spring-petclinic_Testing/blob/main/Jenkinsfile
-
-🙏 Credits & Attribution
-
-This project is based on the official Spring PetClinic sample
+------------------------------------------------------------------------
+
+## 📸 Project Screenshots
+
+Recommended screenshots can be stored under:
+
+    docs/images/
+    ├── jenkins-pipeline.png
+    ├── github-actions-pipeline.png
+    └── sonarqube-dashboard.png
+
+Then add them to this README:
+
+    ![Jenkins Pipeline](docs/images/jenkins-pipeline.png)
+
+    ![GitHub Actions Pipeline](docs/images/github-actions-pipeline.png)
+
+    ![SonarQube Dashboard](docs/images/sonarqube-dashboard.png)
+
+> Before committing screenshots, make sure passwords, tokens,
+> credentials, private URLs, and other sensitive information are not
+> visible.
+
+------------------------------------------------------------------------
+
+## 🎯 Key Learning Outcomes
+
+-   CI/CD pipeline design
+-   Jenkins Pipeline automation
+-   GitHub Actions workflow automation
+-   Self-hosted GitHub Actions runners
+-   Linux-based CI/CD environments
+-   Maven build automation
+-   Java application packaging
+-   Unit-test automation
+-   SonarQube integration
+-   Trivy filesystem scanning
+-   Trivy Docker image scanning
+-   Docker image creation
+-   Docker container execution
+-   Application health checks
+-   CI/CD troubleshooting and failure analysis
+-   DevSecOps practices
+-   Kubernetes deployment/testing concepts
+
+------------------------------------------------------------------------
+
+## 🚧 Future Improvements
+
+-   Docker image push to Docker Hub
+-   Amazon ECR integration
+-   Automated Kubernetes deployment
+-   Helm charts
+-   Argo CD / GitOps
+-   Kubernetes readiness and liveness probes
+-   Prometheus monitoring
+-   Grafana dashboards
+-   Deployment rollback
+-   Slack/email notifications
+-   AWS deployment
+-   Stronger vulnerability gates
+-   Container image signing
+-   SBOM generation
+-   Dependency scanning
+-   Centralized secrets management
+-   Separate development, staging, and production environments
+
+------------------------------------------------------------------------
+
+## 🔗 Repository Links
+
+-   **Main Repository:**
+    [spring-petclinic_Testing](https://github.com/Sushil4080/spring-petclinic_Testing)
+-   **GitHub Actions Workflows:**
+    [.github/workflows](https://github.com/Sushil4080/spring-petclinic_Testing/tree/main/.github/workflows)
+-   **DevSecOps Workflow:**
+    [devsecops.yml](https://github.com/Sushil4080/spring-petclinic_Testing/blob/main/.github/workflows/devsecops.yml)
+-   **Jenkinsfile:**
+    [Jenkinsfile](https://github.com/Sushil4080/spring-petclinic_Testing/blob/main/Jenkinsfile)
+
+------------------------------------------------------------------------
+
+## 🙏 Credits & Attribution
+
+This project is based on the official **Spring PetClinic** sample
 application.
 
-Original upstream project
-
-https://github.com/spring-projects/spring-petclinic
+**Original upstream project:**\
+<https://github.com/spring-projects/spring-petclinic>
 
 The original application source code and functionality are attributed to
 the upstream Spring PetClinic project and its contributors.
@@ -884,72 +697,70 @@ learning, experimentation, CI/CD implementation, and portfolio
 demonstration.
 
 The CI/CD and DevSecOps work described in this README is separate from
-the original application's purpose and documentation.
+the original application\'s purpose and documentation.
 
-📄 License
+------------------------------------------------------------------------
+
+## 📄 License
 
 The underlying Spring PetClinic application is distributed under the
-Apache License 2.0.
+**Apache License 2.0**.
 
-Please refer to:
+Please refer to `LICENSE.txt` and the upstream Spring PetClinic
+repository for complete licensing information.
 
-LICENSE.txt
+------------------------------------------------------------------------
 
-and the upstream Spring PetClinic repository for complete licensing
-information.
-
-⭐ Final Summary
+## ⭐ Final Summary
 
 This repository demonstrates a practical CI/CD and DevSecOps workflow
 around a Spring Boot application.
 
-The project brings together:
-
-Git
-  +
-GitHub
-  +
-Jenkins
-  +
-GitHub Actions
-  +
-Self-Hosted Linux Runner
-  +
-Java 21
-  +
-Maven
-  +
-SonarQube
-  +
-Trivy
-  +
-Docker
-  +
-Kubernetes / Kind
+    Git
+     +
+    GitHub
+     +
+    Jenkins
+     +
+    GitHub Actions
+     +
+    Self-Hosted Linux Runner
+     +
+    Java 21
+     +
+    Maven
+     +
+    SonarQube
+     +
+    Trivy
+     +
+    Docker
+     +
+    Kubernetes / Kind
 
 The primary DevSecOps workflow automates:
 
-Checkout
-   ↓
-Build
-   ↓
-Test
-   ↓
-Code Quality
-   ↓
-Security Scan
-   ↓
-Docker Build
-   ↓
-Container Scan
-   ↓
-Runtime Validation
-   ↓
-Health Check
-   ↓
-Cleanup
+    Checkout
+       ↓
+    Build
+       ↓
+    Test
+       ↓
+    Code Quality
+       ↓
+    Security Scan
+       ↓
+    Docker Build
+       ↓
+    Container Scan
+       ↓
+    Runtime Validation
+       ↓
+    Health Check
+       ↓
+    Cleanup
 
-The goal of this repository is to demonstrate practical DevOps and
-DevSecOps engineering through a working CI/CD project, while clearly
+The goal of this repository is to demonstrate **practical DevOps and
+DevSecOps engineering through a working CI/CD project**, while clearly
 attributing the underlying Spring PetClinic application to its original
 open-source project.
