@@ -3,6 +3,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: petclinic
+  namespace: practice
 spec:
   type: NodePort
   ports:
@@ -16,6 +17,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: petclinic
+  namespace: practice
   labels:
     app: petclinic
 spec:
@@ -30,32 +32,50 @@ spec:
     spec:
       containers:
         - name: workload
-          image: dsyer/petclinic
+          image: localhost:5001/spring-petclinic:test
+          imagePullPolicy: IfNotPresent
+
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: postgres
+
+            - name: POSTGRES_URL
+              value: jdbc:postgresql://demo-db:5432/petclinic
+
+            - name: POSTGRES_USER
+              value: user
+
+            - name: POSTGRES_PASS
+              value: pass
+
             - name: SERVICE_BINDING_ROOT
               value: /bindings
+
             - name: SPRING_APPLICATION_JSON
               value: |
                 {
                   "management.endpoint.health.probes.add-additional-paths": true
                 }
+
           ports:
             - name: http
               containerPort: 8080
+
           livenessProbe:
             httpGet:
               path: /livez
               port: http
+
           readinessProbe:
             httpGet:
               path: /readyz
               port: http
+
           volumeMounts:
             - mountPath: /bindings/secret
               name: binding
               readOnly: true
+
       volumes:
         - name: binding
           projected:
