@@ -1,0 +1,226 @@
+name: PetClinic DevSecOps Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  devsecops:
+    runs-on: [self-hosted, Linux, X64]
+
+    env:
+      IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/petclinic-app
+      IMAGE_TAG: ${{ github.run_number }}
+      K8S_NAMESPACE: practice
+      K8S_DEPLOYMENT: petclinic-app
+      K8S_CONTAINER: petclinic
+
+    steps:
+
+      # ============================================================
+      # 1. CHECKOUT
+      # ============================================================
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      # ============================================================
+      # 2. SETUP JAVA
+      # ============================================================
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      # ============================================================
+      # 3. MAVEN BUILD
+      # ============================================================
+      - name: Maven Build
+        run: |
+          echo "===== Maven Build ====="
+          chmod +x mvnw
+          ./mvnw clean package -DskipTests
+
+      # ============================================================
+      # 4. UNIT TEST
+      # ============================================================
+      - name: Unit Test
+        run: |
+          echo "===== Unit Tests ====="
+          ./mvnw test
+
+      # ============================================================
+      # 5. SONARQUBE
+      # ============================================================
+      - name: SonarQube Analysis
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+        with:
+          args: >
+            -Dsonar.projectKey=petclinic-github-actions
+            -Dsonar.projectName=petclinic-github-actions
+            -Dsonar.sources=src/main/java
+            -Dsonar.tests=src/test/java
+            -Dsonar.java.binaries=target/classes
+
+      # ============================================================
+      # 6. TRIVY FILESYSTEM SCAN
+      # ============================================================
+      - name: Trivy Filesystem Scan
+        run: |
+          echo "===== Trivy Filesystem Scan ====="
+
+          trivy fs \
+            --severity HIGH,CRITICAL \
+            --exit-code 0 \
+            --no-progress \
+            .
+
+      # ============================================================
+      # 7. DOCKER BUILD
+      # ============================================================
+      - name: Docker Build
+        run: |
+          echo "===== Docker Build ====="
+
+          docker build \
+            -t ${IMAGE_NAME}:${IMAGE_TAG} \
+            -t ${IMAGE_NAME}:latest \
+            .
+
+      # ============================================================
+      # 8. TRIVY DOCKER IMAGE SCAN
+      # ============================================================
+      - name: Trivy Docker Image Scan
+        run: |
+          echo "===== Trivy Docker Image Scan ====="
+
+          trivy image \
+            --severity HIGH,CRITICAL \
+            --exit-code 0 \
+            --no-progress \
+            ${IMAGE_NAME}:${IMAGE_TAG}
+
+      # ============================================================
+      # 9. DOCKER RUN
+      # ============================================================
+      - name: Docker Run
+        run: |
+          echo "===== Starting PetClinic ====="
+
+          docker rm -f petclinic-test 2>/dev/null || true
+
+          docker run -d \
+            --name petclinic-test \
+            -p 8081:8080 \
+            ${IMAGE_NAME}:${IMAGE_TAG}
+
+          echo "Waiting for application..."
+          sleep 20
+
+          docker ps
+
+      # ============================================================
+      # 10. HEALTH CHECK
+      # ============================================================
+      - name: Health Check
+        run: |
+          echo "===== Health Check ====="
+
+          curl -f http://localhost:8081/ || {
+            echo "Application health check failed"
+            docker logs petclinic-test
+            exit 1
+          }
+
+          echo "Application is UP"
+
+      # ============================================================
+      # 11. DOCKER LOGIN
+      # ============================================================
+      - name: Login to Docker Hub
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # ============================================================
+      # 12. DOCKER PUSH
+      # ============================================================
+      - name: Docker Push
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          echo "===== Docker Push ====="
+
+          docker push ${IMAGE_NAME}:${IMAGE_TAG}
+          docker push ${IMAGE_NAME}:latest
+
+          echo "Docker image pushed successfully"
+
+      # ============================================================
+      # 13. K3s CLUSTER CHECK
+      # ============================================================
+      - name: Verify K3s Cluster
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          echo "===== K3s Cluster ====="
+
+          kubectl get nodes
+          kubectl get namespace ${K8S_NAMESPACE}
+
+      # ============================================================
+      # 14. DEPLOY TO K3s
+      # ============================================================
+      - name: Deploy to K3s
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          echo "===== Deploying to K3s ====="
+
+          kubectl -n ${K8S_NAMESPACE} set image deployment/${K8S_DEPLOYMENT} \
+            ${K8S_CONTAINER}=${IMAGE_NAME}:${IMAGE_TAG}
+
+          echo "Image updated successfully"
+
+      # ============================================================
+      # 15. VERIFY KUBERNETES ROLLOUT
+      # ============================================================
+      - name: Verify Kubernetes Deployment
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          echo "===== Kubernetes Rollout ====="
+
+          kubectl rollout status \
+            deployment/${K8S_DEPLOYMENT} \
+            -n ${K8S_NAMESPACE} \
+            --timeout=180s
+
+          echo "===== Deployment Status ====="
+
+          kubectl get deployment \
+            ${K8S_DEPLOYMENT} \
+            -n ${K8S_NAMESPACE}
+
+          echo "===== Pods ====="
+
+          kubectl get pods \
+            -n ${K8S_NAMESPACE}
+
+      # ============================================================
+      # 16. CLEANUP
+      # ============================================================
+      - name: Cleanup
+        if: always()
+        run: |
+          echo "===== Cleanup ====="
+
+          docker rm -f petclinic-test 2>/dev/null || true
+
+          echo "Cleanup completed"
