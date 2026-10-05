@@ -1,0 +1,189 @@
+name: DevOps CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  IMAGE_NAME: your-dockerhub-username/your-app
+  IMAGE_TAG: ${{ github.sha }}
+
+jobs:
+
+  # =====================================================
+  # 1. Checkout
+  # =====================================================
+  checkout:
+    name: Checkout Code
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+
+  # =====================================================
+  # 2. Maven Build & Test
+  # =====================================================
+  build-test:
+    name: Maven Build & Test
+    runs-on: ubuntu-latest
+    needs: checkout
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Build and Test
+        run: |
+          mvn clean test package
+
+
+  # =====================================================
+  # 3. SonarQube Analysis
+  # =====================================================
+  sonarqube:
+    name: SonarQube Analysis
+    runs-on: ubuntu-latest
+    needs: build-test
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: SonarQube Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: |
+          mvn clean verify sonar:sonar \
+            -Dsonar.projectKey=your-project-key \
+            -Dsonar.host.url=$SONAR_HOST_URL \
+            -Dsonar.token=$SONAR_TOKEN
+
+
+  # =====================================================
+  # 4. Trivy Security Scan
+  # =====================================================
+  trivy:
+    name: Trivy Security Scan
+    runs-on: ubuntu-latest
+    needs: build-test
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy Filesystem Scan
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          scan-type: fs
+          scan-ref: .
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+
+
+  # =====================================================
+  # 5. Docker Build
+  # =====================================================
+  docker-build:
+    name: Docker Build
+    runs-on: ubuntu-latest
+    needs:
+      - sonarqube
+      - trivy
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            -t $IMAGE_NAME:$IMAGE_TAG \
+            -t $IMAGE_NAME:latest \
+            .
+
+
+  # =====================================================
+  # 6. Docker Push
+  # =====================================================
+  docker-push:
+    name: Docker Push
+    runs-on: ubuntu-latest
+    needs: docker-build
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            -t $IMAGE_NAME:$IMAGE_TAG \
+            -t $IMAGE_NAME:latest \
+            .
+
+      - name: Push Docker image
+        run: |
+          docker push $IMAGE_NAME:$IMAGE_TAG
+          docker push $IMAGE_NAME:latest
+
+
+  # =====================================================
+  # 7. Kubernetes Deployment
+  # =====================================================
+  deploy:
+    name: Deploy to Kubernetes
+    runs-on: ubuntu-latest
+    needs: docker-push
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: latest
+
+      - name: Configure Kubernetes
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: Update Kubernetes image
+        run: |
+          kubectl set image deployment/nginx-demo-nginx \
+            nginx=$IMAGE_NAME:$IMAGE_TAG \
+            -n practice
+
+      - name: Verify deployment
+        run: |
+          kubectl rollout status deployment/nginx-demo-nginx \
+            -n practice
